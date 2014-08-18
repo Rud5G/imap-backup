@@ -30,6 +30,10 @@ module Imap::Backup
     def save(uid, message)
       uid = uid.to_s
       return if uids.include?(uid)
+
+      # invalidate cache
+      @uids = nil
+
       body = message['RFC822']
       mboxrd_message = Email::Mboxrd::Message.new(body)
       mbox = imap = nil
