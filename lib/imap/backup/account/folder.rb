@@ -35,5 +35,17 @@ module Imap::Backup
       Imap::Backup.logger.warn "Folder '#{folder}' does not exist"
       nil
     end
+
+    def append(message)
+      response = imap.append(folder, message.to_s, nil, message.date)
+      extract_uid(response)
+    end
+
+    private
+
+    def extract_uid(response)
+      uid_validity, uid = response.data.code.data.split(' ')
+      uid.to_i
+    end
   end
 end
