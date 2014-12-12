@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'highline'
   gem.add_runtime_dependency 'mail'
 
+  gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'rspec',  '>= 3.0.0'
   gem.add_development_dependency 'simplecov'
 end
