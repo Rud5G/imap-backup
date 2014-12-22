@@ -106,6 +106,9 @@ UIDs to allow a full restore.
 All missing messages are pushed to the IMAP server.
 Existing messages are left unchanged.
 
+This functionality requires that the IMAP server supports the UIDPLUS
+extension to IMAP4.
+
 # Other Usage
 
 List IMAP folders:
