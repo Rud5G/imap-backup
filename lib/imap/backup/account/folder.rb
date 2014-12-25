@@ -11,6 +11,7 @@ module Imap::Backup
 
     attr_reader :connection
     attr_reader :name
+    attr_reader :uid_validity
 
     delegate imap: :connection
 
@@ -20,7 +21,7 @@ module Imap::Backup
     end
 
     def uids
-      imap.examine(name)
+      examine
       imap.uid_search(['ALL']).sort.map(&:to_s)
     rescue Net::IMAP::NoResponseError => e
       Imap::Backup.logger.warn "Folder '#{name}' does not exist"
@@ -28,7 +29,7 @@ module Imap::Backup
     end
 
     def fetch(uid)
-      imap.examine(name)
+      examine
       message = imap.uid_fetch([uid.to_i], REQUESTED_ATTRIBUTES)[0][1]
       message['RFC822'].force_encoding('utf-8') if RUBY_VERSION > '1.9'
       message
@@ -44,9 +45,14 @@ module Imap::Backup
 
     private
 
+    def examine
+      response = imap.examine(name)
+      @uid_validity = imap.responses['UIDVALIDITY'][-1]
+    end
+
     def extract_uid(response)
-      uid_validity, uid = response.data.code.data.split(' ')
-      uid.to_i
+      @uid_validity, uid = response.data.code.data.split(' ').map(&:to_i)
+      uid
     end
   end
 end
